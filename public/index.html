@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Domaine Of World — Un seul monde, toutes vos communautés</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%8D%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+
+<div id="toast-container"></div>
+
+<!-- ============================= AUTH SCREEN ============================= -->
+<section id="auth-screen">
+  <div class="auth-visual">
+    <canvas id="world-canvas"></canvas>
+    <div class="auth-visual-content">
+      <div class="brand-mark"><i class="fa-solid fa-globe"></i> DOMAINE OF WORLD</div>
+      <h1>Un seul monde.<br>Toutes vos communautés.</h1>
+      <p>Messages, publications, groupes et vidéos courtes — réunis dans un seul domaine, pensé pour vos communautés.</p>
+      <ul class="auth-features">
+        <li><i class="fa-solid fa-people-group"></i> Créez des groupes &amp; communautés</li>
+        <li><i class="fa-solid fa-clapperboard"></i> Publiez photos et vidéos courtes</li>
+        <li><i class="fa-solid fa-circle-check"></i> Comptes et groupes certifiés</li>
+        <li><i class="fa-solid fa-sack-dollar"></i> Monétisation dès 1000 abonnés</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button type="button" class="active" data-authtab="login">Connexion</button>
+        <button type="button" data-authtab="register">Créer un compte</button>
+      </div>
+
+      <form id="login-form">
+        <div class="field">
+          <label for="login-email">Adresse e-mail</label>
+          <input type="email" id="login-email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="login-password">Mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="login-password" autocomplete="current-password" required>
+            <button type="button" class="toggle-visibility" data-target="login-password"><i class="fa-solid fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="error-text" id="login-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
+        <p class="form-hint">Compte fondateur certifié déjà configuré : utilisez les identifiants admin définis dans <code>.env</code>.</p>
+      </form>
+
+      <form id="register-form" hidden>
+        <div class="field">
+          <label for="register-username">Nom d'utilisateur</label>
+          <input type="text" id="register-username" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="register-email">Adresse e-mail</label>
+          <input type="email" id="register-email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="register-password">Mot de passe</label>
+          <div class="input-wrap">
+            <input type="password" id="register-password" autocomplete="new-password" required>
+            <button type="button" class="toggle-visibility" data-target="register-password"><i class="fa-solid fa-eye"></i></button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="register-password-confirm">Confirmer le mot de passe</label>
+          <input type="password" id="register-password-confirm" autocomplete="new-password" required>
+        </div>
+        <div class="error-text" id="register-error"></div>
+        <button type="submit" class="btn btn-primary btn-block">Créer mon compte</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= APP SHELL ============================= -->
+<div id="app-shell" hidden>
+
+  <header class="topbar">
+    <div class="brand-mark small"><i class="fa-solid fa-globe"></i> Domaine Of World</div>
+    <div class="topbar-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="search-input" placeholder="Rechercher un compte ou un groupe...">
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="btn-shortcut-messages" title="Messages"><i class="fa-solid fa-message"></i></button>
+      <div class="profile-chip" id="profile-chip">
+        <span id="topbar-avatar-slot"></span>
+        <span id="topbar-username">—</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:.7rem;color:var(--mist);"></i>
+      </div>
+      <div class="profile-dropdown" id="profile-dropdown" hidden>
+        <button type="button" id="dd-profile"><i class="fa-solid fa-user"></i> Mon profil</button>
+        <button type="button" id="dd-change-photo"><i class="fa-solid fa-camera"></i> Changer ma photo</button>
+        <hr>
+        <button type="button" id="dd-logout"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-body">
+    <nav class="sidebar">
+      <button class="nav-item active" data-view="feed"><i class="fa-solid fa-house"></i><span>Fil d'actualité</span></button>
+      <button class="nav-item" data-view="videos"><i class="fa-solid fa-clapperboard"></i><span>Vidéos</span></button>
+      <button class="nav-item" data-view="groups"><i class="fa-solid fa-people-group"></i><span>Groupes</span></button>
+      <button class="nav-item" data-view="messages"><i class="fa-solid fa-message"></i><span>Messages</span></button>
+      <button class="nav-item" data-view="certification"><i class="fa-solid fa-circle-check"></i><span>Certification</span></button>
+      <button class="nav-item" data-view="profile"><i class="fa-solid fa-user"></i><span>Profil</span></button>
+      <button class="nav-item admin-only" data-view="admin" hidden><i class="fa-solid fa-shield-halved"></i><span>Panel admin</span></button>
+    </nav>
+
+    <main class="main-content">
+
+      <section class="view" id="view-feed">
+        <div class="view-header">
+          <div><span class="eyebrow">Fil d'actualité</span><h2>Votre monde, en direct</h2></div>
+          <button class="btn btn-primary" id="btn-open-post-feed"><i class="fa-solid fa-pen"></i> Publier</button>
+        </div>
+        <div id="feed-list"></div>
+      </section>
+
+      <section class="view" id="view-videos" hidden>
+        <div class="view-header">
+          <div><span class="eyebrow">Vidéos courtes</span><h2>Défilez, découvrez</h2></div>
+          <button class="btn btn-primary" id="btn-open-post-video"><i class="fa-solid fa-video"></i> Publier une vidéo</button>
+        </div>
+        <div class="video-feed" id="video-feed"></div>
+      </section>
+
+      <section class="view" id="view-groups" hidden>
+        <div class="view-header">
+          <div><span class="eyebrow">Communautés</span><h2>Groupes &amp; communautés</h2></div>
+          <button class="btn btn-primary" id="btn-open-create-group"><i class="fa-solid fa-plus"></i> Créer un groupe</button>
+        </div>
+        <div class="group-grid" id="group-grid"></div>
+      </section>
+
+      <section class="view" id="view-group-detail" hidden>
+        <button class="back-link" id="btn-back-groups"><i class="fa-solid fa-arrow-left"></i> Retour aux groupes</button>
+        <div class="card group-header-block" id="group-detail-header"></div>
+        <div id="group-detail-posts"></div>
+      </section>
+
+      <section class="view" id="view-messages" hidden>
+        <div class="view-header">
+          <div><span class="eyebrow">Messagerie</span><h2>Messages</h2></div>
+        </div>
+        <div class="messages-layout" id="messages-layout">
+          <div class="conv-list" id="conv-list"></div>
+          <div class="chat-panel" id="chat-panel">
+            <div class="no-conv-selected">Sélectionnez une conversation pour commencer à discuter.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-certification" hidden>
+        <div class="view-header">
+          <div><span class="eyebrow">Certification</span><h2>Faites certifier votre compte</h2></div>
+        </div>
+        <div id="cert-content"></div>
+      </section>
+
+      <section class="view" id="view-profile" hidden>
+        <div id="profile-content"></div>
+      </section>
+
+      <section class="view" id="view-admin" hidden>
+        <div class="view-header">
+          <div><span class="eyebrow">Administration</span><h2>Panel admin</h2></div>
+        </div>
+        <div class="admin-tabs">
+          <button type="button" class="active" data-admintab="users">Utilisateurs</button>
+          <button type="button" data-admintab="requests">Demandes de certification</button>
+          <button type="button" data-admintab="groups">Groupes</button>
+        </div>
+        <div id="admin-content"></div>
+      </section>
+
+    </main>
+
+    <aside class="right-rail">
+      <div class="rail-card">
+        <h4><i class="fa-solid fa-compass"></i> Comptes à découvrir</h4>
+        <div id="rail-suggestions"></div>
+      </div>
+      <div class="rail-card">
+        <h4><i class="fa-solid fa-circle-check" style="color:var(--gold);"></i> Groupes certifiés</h4>
+        <div id="rail-certified-groups"></div>
+      </div>
+    </aside>
+  </div>
+
+  <button class="fab" id="fab-post"><i class="fa-solid fa-plus"></i></button>
+
+  <nav class="mobile-tabbar">
+    <div class="tabs-row">
+      <button class="tab-item active" data-view="feed"><i class="fa-solid fa-house"></i>Accueil</button>
+      <button class="tab-item" data-view="videos"><i class="fa-solid fa-clapperboard"></i>Vidéos</button>
+      <button class="tab-item" data-view="groups"><i class="fa-solid fa-people-group"></i>Groupes</button>
+      <button class="tab-item" data-view="messages"><i class="fa-solid fa-message"></i>Messages</button>
+      <button class="tab-item" data-view="profile"><i class="fa-solid fa-user"></i>Profil</button>
+    </div>
+  </nav>
+</div>
+
+<!-- ============================= MODALS ============================= -->
+<div class="modal-overlay" id="modal-create-post" hidden>
+  <div class="modal">
+    <div class="modal-header"><h3>Nouvelle publication</h3><button class="modal-close" data-close="modal-create-post"><i class="fa-solid fa-xmark"></i></button></div>
+    <form id="create-post-form">
+      <div class="field">
+        <label for="post-caption">Légende</label>
+        <textarea id="post-caption" placeholder="Exprimez-vous..."></textarea>
+      </div>
+      <div class="field">
+        <label for="post-group-target">Publier dans</label>
+        <select id="post-group-target">
+          <option value="">Mon profil (public)</option>
+        </select>
+      </div>
+      <label class="file-drop" id="post-file-drop" for="post-file">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span id="post-file-label">Ajouter une photo ou une vidéo (optionnel)</span>
+      </label>
+      <input type="file" id="post-file" class="hidden-input" accept="image/*,video/*">
+      <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-paper-plane"></i> Publier</button>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-create-group" hidden>
+  <div class="modal">
+    <div class="modal-header"><h3>Créer un groupe</h3><button class="modal-close" data-close="modal-create-group"><i class="fa-solid fa-xmark"></i></button></div>
+    <form id="create-group-form">
+      <div class="field">
+        <label for="group-name">Nom du groupe</label>
+        <input type="text" id="group-name" required>
+      </div>
+      <div class="field">
+        <label for="group-description">Description</label>
+        <textarea id="group-description" placeholder="Décrivez l'objectif de cette communauté..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block"><i class="fa-solid fa-people-group"></i> Créer le groupe</button>
+    </form>
+  </div>
+</div>
+
+<input type="file" id="hidden-photo-input" class="hidden-input" accept="image/*">
+<script src="/app.js" defer></script>
+</body>
+          </html>
